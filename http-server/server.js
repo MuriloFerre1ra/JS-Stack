@@ -1,21 +1,35 @@
-//import modules http and filesystem
-const http = require('http'), fs = require('fs')
+const express = require('express')
+const app = express()
+const path = require('path')
 
-//create server HTTP
-http.createServer((req, res) => {
-    //Header response
-    res.writeHead(200, {
-        'Content-Type': 'text/html',
-        'access-control-allow-origin': '*'
-    })
+//Create route
+app.get('/', (req,res) => {
+    //send index.html for client
+    res.sendFile(path.join(__dirname + '/index.html'))
+})
 
-    //Read index.html
-    let readStream = fs.createReadStream(__dirname + '/index.html')
-    //Send for client
-    readStream.pipe(res)    
-}).listen(8000);
+//Call instancie for router
+var adminRouter = express.Router();
 
-//Info endpoint for user
-console.log('Visit me: http://localhost:8000');
+//create route
+//home page (https://localhost:8000/admin)
+adminRouter.get('/', function(req, res) {
+    res.send('I am dashboard!')
+});
 
+//users page (https://localhost:8000/admin/users)
+adminRouter.get('/users', function(req,res) {
+    res.send('List all users!')
+});
 
+//posts pages (https://localhost:8000/admin/posts)
+adminRouter.get('/posts', function(req,res) {
+    res.send('Here we will see all the posts');
+})
+
+//add routes in the principal app
+app.use('/admin', adminRouter)
+
+//init server the in port 8001
+app.listen(8000)
+console.log('8000 is the port magic')
